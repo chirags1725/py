@@ -28,10 +28,10 @@ def text_to_speech(text):
     system_platform = sys.platform
     if system_platform == 'Darwin':  # macOS
         speak_mac(text)
-    elif system_platform == 'Windows':  # Windows
-        speak_windows(text)
+    # elif system_platform == 'Windows':  # Windows
+        
     else:
-        st.error("Unsupported operating system")
+        speak_windows(text)
 
 def speak_mac(text):
     os.system(f'say {text}')
