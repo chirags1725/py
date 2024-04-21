@@ -3,9 +3,10 @@ import streamlit as st
 import pickle
 from sklearn.feature_extraction.text import CountVectorizer
 import numpy as np
-from gtts import gTTS
-import tempfile
 import os
+import pyttsx3
+
+import platform
 # These modules are causing issues when hosting on Streamlit
 # from win32com.client import Dispatch
 # import pythoncom
@@ -22,11 +23,23 @@ import os
 # Load the model and CountVectorizer
 
 
-def text_to_speech(text, language='en'):
-    tts = gTTS(text=text, lang=language)
-    with tempfile.NamedTemporaryFile(delete=False) as f:
-        tts.save(f.name)
-        os.system(f"mpg123 {f.name}")
+def text_to_speech(text):
+    system_platform = platform.system()
+    if system_platform == 'Darwin':  # macOS
+        speak_mac(text)
+    elif system_platform == 'Windows':  # Windows
+        speak_windows(text)
+    else:
+        st.error("Unsupported operating system")
+
+def speak_mac(text):
+    import os
+    os.system(f'say {text}')
+
+def speak_windows(text):
+    engine = pyttsx3.init()
+    engine.say(text)
+    engine.runAndWait()
 
 
 model = pickle.load(open('model.pkl', 'rb'))
