@@ -5,6 +5,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 import numpy as np
 import os
 import pyttsx3
+import sys
 
 import platform
 # These modules are causing issues when hosting on Streamlit
@@ -24,7 +25,7 @@ import platform
 
 
 def text_to_speech(text):
-    system_platform = platform.system()
+    system_platform = sys.platform
     if system_platform == 'Darwin':  # macOS
         speak_mac(text)
     elif system_platform == 'Windows':  # Windows
@@ -33,7 +34,6 @@ def text_to_speech(text):
         st.error("Unsupported operating system")
 
 def speak_mac(text):
-    import os
     os.system(f'say {text}')
 
 def speak_windows(text):
