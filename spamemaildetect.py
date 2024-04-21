@@ -3,11 +3,19 @@ import streamlit as st
 import pickle
 from sklearn.feature_extraction.text import CountVectorizer
 import numpy as np
+from gtts import gTTS
 import os
-import pyttsx3
-import sys
+import pygame
+from io import BytesIO
 
-import platform
+def speak(text):
+    tts = gTTS(text=text, lang='en')
+    audio_bytes = tts.get_audio_bytes()
+    with BytesIO(audio_bytes) as f:
+        pygame.mixer.init()
+        pygame.mixer.music.load(f)
+        pygame.mixer.music.play()
+
 # These modules are causing issues when hosting on Streamlit
 # from win32com.client import Dispatch
 # import pythoncom
@@ -24,23 +32,6 @@ import platform
 # Load the model and CountVectorizer
 
 
-def speak(text):
-    if st.session_state.is_windows:
-        speak_windows(text)
-    elif st.session_state.is_mac:
-        speak_mac(text)
-    else:
-        st.error("Unsupported operating system")
-
-def speak_mac(text):
-    import os
-    os.system(f'say {text}')
-
-def speak_windows(text):
-    import pyttsx3
-    engine = pyttsx3.init()
-    engine.say(text)
-    engine.runAndWait()
 
 
 model = pickle.load(open('model.pkl', 'rb'))
@@ -83,18 +74,4 @@ def main():
         st.write("Filter out Suspicious Emails")
         st.write('Filter out you Suspicious By using this Spam Mail Detector Tool that will tell You Weather a Email is a Malicious Email or not. This Spam Email detector saves users valuable time and enhances productivity by ensuring that only relevant and legitimate messages reach their inboxes. Moreover, they serve as a frontline defense against various cyber threats, such as phishing attempts, malware distribution, and scams, thereby bolstering security and protecting sensitive information. Ultimately, This Email Spam detector fosters a positive email experience by delivering a clean and trustworthy inbox, thereby enhancing user satisfaction and trust in email communication.')
 
-if __name__ == "__main__":
-    # Detect the operating system and set session state flags accordingly
-    if "is_windows" not in st.session_state:
-        st.session_state.is_windows = False
-    if "is_mac" not in st.session_state:
-        st.session_state.is_mac = False
-
-    # Detect the operating system and set session state flags accordingly
-    if st._is_running_on_darwin:
-        st.session_state.is_mac = True
-    elif st._is_running_on_windows:
-        st.session_state.is_windows = True
-
-
-    main()
+main()
