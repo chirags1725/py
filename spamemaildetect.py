@@ -3,15 +3,26 @@ import streamlit as st
 import pickle
 from sklearn.feature_extraction.text import CountVectorizer
 import numpy as np
-import pyttsx3
+from gtts import gTTS
+import pygame
 
 
 def speak(text):
-    engine = pyttsx3.init()
-    engine.setProperty('rate', 150)  # Speed of speech
-    engine.setProperty('volume', 0.9)
-    engine.say(text)
-    engine.runAndWait()
+    tts = gTTS(text=text, lang='en')
+    tts.save("output.mp3")
+
+    # Initialize pygame mixer
+    pygame.mixer.init()
+
+    # Load the audio file
+    pygame.mixer.music.load("output.mp3")
+
+    # Play the audio file
+    pygame.mixer.music.play()
+
+    # Wait for the speech to finish playing
+    while pygame.mixer.music.get_busy():
+        pygame.time.Clock().tick(10)
 
 # These modules are causing issues when hosting on Streamlit
 # from win32com.client import Dispatch
