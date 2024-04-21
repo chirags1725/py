@@ -24,19 +24,20 @@ import platform
 # Load the model and CountVectorizer
 
 
-def text_to_speech(text):
-    system_platform = sys.platform
-    if system_platform == 'Darwin':  # macOS
-        speak_mac(text)
-    # elif system_platform == 'Windows':  # Windows
-        
-    else:
+def speak(text):
+    if st.session_state.is_windows:
         speak_windows(text)
+    elif st.session_state.is_mac:
+        speak_mac(text)
+    else:
+        st.error("Unsupported operating system")
 
 def speak_mac(text):
+    import os
     os.system(f'say {text}')
 
 def speak_windows(text):
+    import pyttsx3
     engine = pyttsx3.init()
     engine.say(text)
     engine.runAndWait()
@@ -69,13 +70,13 @@ def main():
             result = model.predict(vec)
             if result[0] == 0:
                 st.success("This is Not A Spam Email")
-                text_to_speech("THANK GOD This is Not A Spam Email")
+                speak("THANK GOD This is Not A Spam Email")
                 # Commenting out the speak function as it requires win32com which is not compatible with Streamlit
                 # speak(
             else:
                 st.error("This is A Spam Email")
                 # Commenting out the speak function as it requires win32com which is not compatible with Streamlit
-                text_to_speech("ALERT This is A Spam Email")
+                speak("ALERT This is A Spam Email")
                 
     else:
         st.write(':green[Spam Email Detection]')
