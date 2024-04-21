@@ -3,5 +3,4 @@ scikit-learn
 numpy
 gtts
 mpg123
-platform
 pyttsx3
