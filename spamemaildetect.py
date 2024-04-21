@@ -85,13 +85,16 @@ def main():
 
 if __name__ == "__main__":
     # Detect the operating system and set session state flags accordingly
-    st.session_state.is_windows = False
-    st.session_state.is_mac = False
+    if "is_windows" not in st.session_state:
+        st.session_state.is_windows = False
+    if "is_mac" not in st.session_state:
+        st.session_state.is_mac = False
 
-    if st._is_running_with_streamlit:
-        if st._is_running_on_darwin:
-            st.session_state.is_mac = True
-        elif st._is_running_on_windows:
-            st.session_state.is_windows = True
+    # Detect the operating system and set session state flags accordingly
+    if st._is_running_on_darwin:
+        st.session_state.is_mac = True
+    elif st._is_running_on_windows:
+        st.session_state.is_windows = True
+
 
     main()
