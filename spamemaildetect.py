@@ -10,8 +10,9 @@ from io import BytesIO
 
 def speak(text):
     tts = gTTS(text=text, lang='en')
-    audio_bytes = tts.get_audio_bytes()
-    with BytesIO(audio_bytes) as f:
+    with BytesIO() as f:
+        tts.write_to_fp(f)
+        f.seek(0)
         pygame.mixer.init()
         pygame.mixer.music.load(f)
         pygame.mixer.music.play()
