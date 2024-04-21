@@ -83,7 +83,15 @@ def main():
         st.write("Filter out Suspicious Emails")
         st.write('Filter out you Suspicious By using this Spam Mail Detector Tool that will tell You Weather a Email is a Malicious Email or not. This Spam Email detector saves users valuable time and enhances productivity by ensuring that only relevant and legitimate messages reach their inboxes. Moreover, they serve as a frontline defense against various cyber threats, such as phishing attempts, malware distribution, and scams, thereby bolstering security and protecting sensitive information. Ultimately, This Email Spam detector fosters a positive email experience by delivering a clean and trustworthy inbox, thereby enhancing user satisfaction and trust in email communication.')
 
-main()
+if __name__ == "__main__":
+    # Detect the operating system and set session state flags accordingly
+    st.session_state.is_windows = False
+    st.session_state.is_mac = False
 
+    if st._is_running_with_streamlit:
+        if st._is_running_on_darwin:
+            st.session_state.is_mac = True
+        elif st._is_running_on_windows:
+            st.session_state.is_windows = True
 
-
+    main()
