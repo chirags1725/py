@@ -2,27 +2,7 @@ from random import choices
 import streamlit as st
 import pickle
 from sklearn.feature_extraction.text import CountVectorizer
-import numpy as np
-from gtts import gTTS
-import pygame
-
-
-def speak(text):
-    tts = gTTS(text=text, lang='en')
-    tts.save("output.mp3")
-
-    # Initialize pygame mixer
-    pygame.mixer.init()
-
-    # Load the audio file
-    pygame.mixer.music.load("output.mp3")
-
-    # Play the audio file
-    pygame.mixer.music.play()
-
-    # Wait for the speech to finish playing
-    while pygame.mixer.music.get_busy():
-        pygame.time.Clock().tick(10)
+import base64
 
 # These modules are causing issues when hosting on Streamlit
 # from win32com.client import Dispatch
@@ -44,6 +24,20 @@ def speak(text):
 
 model = pickle.load(open('model.pkl', 'rb'))
 cv = pickle.load(open('vectorizer.pkl', 'rb'))
+
+def autoplay_audio(file_path: str):
+    with open(file_path, "rb") as f:
+        data = f.read()
+        b64 = base64.b64encode(data).decode()
+        md = f"""
+            <audio autoplay="true">
+            <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
+            </audio>
+            """
+        st.markdown(
+            md,
+            unsafe_allow_html=True,
+        )
 
 def main():
     # Adjust the width of the logo column as needed
@@ -68,14 +62,17 @@ def main():
             vec = cv.transform(data).toarray()
             result = model.predict(vec)
             if result[0] == 0:
+                autoplay_audio("ttsmake.mp3")
+                # st.components.v1.html(f'<audio autoplay><source src="{audio_file_path}" type="audio/mp3"></audio>')
+                # st.markdown(f"""<script>var audio=new Audio("{audio_file_path}");audio.play()<script>""", unsafe_allow_html=True)
+                # st.markdown(f"""<script>var audio=new Audio("{audio_file_path}");
+                #          audio.play()<script>""")
                 st.success("This is Not A Spam Email")
-                speak("THANK GOD This is Not A Spam Email")
-                # Commenting out the speak function as it requires win32com which is not compatible with Streamlit
-                # speak(
             else:
+                
+                autoplay_audio("spam.mp3")
                 st.error("This is A Spam Email")
-                # Commenting out the speak function as it requires win32com which is not compatible with Streamlit
-                speak("ALERT This is A Spam Email")
+
                 
     else:
         st.write(':green[Spam Email Detection]')
